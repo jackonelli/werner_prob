@@ -7,8 +7,9 @@ from src.loss.interface import Loss as Interface
 class Loss(Interface):
     """Cross entropy loss"""
     def __init__(self):
-        self._func = F.nll_loss
+        pass
 
-    def compute(self, estimate: torch.Tensor, target: torch.Tensor):
+    @staticmethod
+    def compute(estimate: torch.Tensor, target: torch.Tensor):
         """Compute loss"""
-        return self._func(estimate, target)
+        return F.nll_loss(estimate, target)

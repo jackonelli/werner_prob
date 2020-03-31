@@ -1,10 +1,21 @@
 """Loss module"""
 import torch
+from src.loss.interface import Loss as Interface
+
+
+class Loss(Interface):
+    """Cross entropy loss"""
+    def __init__(self, ref_vecs):
+        self.ref_vecs = ref_vecs
+
+    def compute(self, estimate: torch.Tensor, target: torch.Tensor):
+        """Compute loss"""
+        angles_to_refs = angle(estimate, self.ref_vecs)
 
 
 def cos_of_angle_to_refs(feature_vec: torch.Tensor,
                          ref_vecs: torch.Tensor) -> torch.Tensor:
-    """Calculate angle between two vectors
+    """Calculate the cosine of the angle between two vectors
     D - dimensionality of feature space
     K - number of reference vectors
 
