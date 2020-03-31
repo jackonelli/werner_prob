@@ -29,6 +29,7 @@ def train(model: Classifier, dataloaders: Dict[str, torch_data.DataLoader],
 
 def _train_epoch(model: Classifier, dataloader: torch_data.DataLoader,
                  loss_function: Loss, optimizer, log_interval: int):
+    model.train()
     store_loss = list()
     for batch_ind, batch in enumerate(dataloader):
         optimizer.zero_grad()
@@ -43,6 +44,7 @@ def _train_epoch(model: Classifier, dataloader: torch_data.DataLoader,
 
 
 def _validate_epoch(model, dataloader, loss_function):
+    model.eval()
     store_loss = list()
     for _, batch in enumerate(dataloader):
         input_, target = batch
@@ -55,7 +57,7 @@ def _print_epoch(current_epoch, total_epochs, train_loss, validation_loss):
     """Temp logger function"""
     train_loss_agg = train_loss.mean().item()
     val_loss_agg = validation_loss.mean().item() if validation_loss else "-"
-    print("Epoch: {}/{}\tTrain loss: {}, Val. loss: {}".format(
+    print("Epoch: {}/{}\tTrain loss: {:3f}, Val. loss: {}".format(
         current_epoch, total_epochs, train_loss_agg, val_loss_agg))
 
 
@@ -63,7 +65,7 @@ def _print_batch(batch_ind: int, log_interval: int, num_batches: int,
                  loss: float):
     """Temp logger function"""
     if batch_ind % log_interval == 0 and batch_ind > 0:
-        print("\tBatch: [{}/{}]\tLoss: {:.6f}".format(batch_ind, num_batches,
+        print("\tBatch: [{}/{}]\tLoss: {:.3f}".format(batch_ind, num_batches,
                                                       loss))
 
 
