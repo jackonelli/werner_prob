@@ -12,7 +12,8 @@ VAL_KEY = "validation"
 def train(model: Classifier, dataloaders: Dict[str, torch_data.DataLoader],
           loss_function: Loss, optimizer, settings: "TrainSettings"):
     """Train model"""
-    print("Training")
+    print("Training - Model: {}, loss: {}, optimizer: {}".format(
+        model.info(), loss_function.info(), optimizer))
     for epoch in range(settings.num_epochs):
         train_loss = _train_epoch(model,
                                   dataloaders[TRAIN_KEY],

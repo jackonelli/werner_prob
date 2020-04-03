@@ -4,13 +4,18 @@ from src.loss.interface import Loss as Interface
 
 
 class Loss(Interface):
-    """Cross entropy loss"""
+    """Angle loss"""
     def __init__(self, ref_vecs):
-        self.ref_vecs = ref_vecs
+        self.name = "Angle"
+        self._ref_vecs = ref_vecs
+
+    def info(self):
+        """Loss info to string"""
+        return self.name
 
     def compute(self, estimate: torch.Tensor, target: torch.Tensor):
         """Compute loss"""
-        angles_to_refs = angle(estimate, self.ref_vecs)
+        angles_to_refs = angle(estimate, self._ref_vecs)
 
 
 def cos_of_angle_to_refs(feature_vec: torch.Tensor,
@@ -35,15 +40,3 @@ def cos_of_angle_to_refs(feature_vec: torch.Tensor,
 def angle(a_vec: torch.Tensor, b_vec: torch.Tensor) -> torch.Tensor:
     """Calculate angle between two vectors"""
     return torch.acos(cos_of_angle_to_refs(a_vec, b_vec))
-
-
-def quick_test():
-    x_vec = torch.Tensor([1.0, 0.0])
-    y_vec = torch.Tensor([[1.0, 0.0], [0.0, 2.0], [-3.0, 0.0]])
-    aba = (x_vec * y_vec).sum(-1)
-    y_norm = y_vec.pow(2).sum(-1).sqrt()
-    print("cos_ref", cos_of_angle_to_refs(x_vec, y_vec))
-
-
-if __name__ == "__main__":
-    quick_test()

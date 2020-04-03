@@ -1,18 +1,23 @@
-"""CNN classifier"""
+"""CNN direction estimation"""
 import torch.nn as nn
 import torch.nn.functional as F
 from src.models.interface import Classifier
 
 
 class Net(Classifier):
-    """CNN Net"""
+    """CNN direction estimation"""
     def __init__(self):
         super(Net, self).__init__()
+        self.name = "CNN direction"
         self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
         self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
         self.conv2_drop = nn.Dropout2d()
         self.fc1 = nn.Linear(320, 50)
         self.fc2 = nn.Linear(50, 10)
+
+    def info(self):
+        """Model info to string"""
+        return self.name
 
     def forward(self, x):
         """Propagate input"""
