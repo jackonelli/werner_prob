@@ -4,5 +4,6 @@ __pycache__
 *.pyc
 
 venv
+logs
 data
 stored_models
