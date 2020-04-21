@@ -14,31 +14,34 @@ def train(model: Classifier, dataloaders: Dict[str, torch_data.DataLoader],
     """Train model"""
     print("Training - Model: {}, loss: {}, optimizer: {}".format(
         model.info(), loss_function.info(), optimizer))
-    for epoch in range(settings.num_epochs):
+    model = model.to(settings.device)
+    for epoch in range(1, settings.num_epochs + 1):
         train_loss = _train_epoch(model,
                                   dataloaders[TRAIN_KEY],
                                   loss_function,
                                   optimizer,
+                                  device=settings.device,
                                   log_interval=settings.log_interval)
         validation_loss = None
         if VAL_KEY in dataloaders:
             with torch.no_grad():
-                validation_loss = _validate_epoch(
-                    model,
-                    dataloaders[VAL_KEY],
-                    loss_function,
-                )
+                validation_loss = _validate_epoch(model,
+                                                  dataloaders[VAL_KEY],
+                                                  loss_function,
+                                                  device=settings.device)
         _print_epoch(epoch, settings.num_epochs, train_loss, validation_loss)
     return model
 
 
 def _train_epoch(model: Classifier, dataloader: torch_data.DataLoader,
-                 loss_function: Loss, optimizer, log_interval: int):
+                 loss_function: Loss, optimizer, device: torch.device,
+                 log_interval: int):
     model.train()
     store_loss = list()
     for batch_ind, batch in enumerate(dataloader):
         optimizer.zero_grad()
         input_, target = batch
+        input_, target = input_.to(device), target.to(device)
         output = model(input_)
         loss = loss_function.compute(output, target)
         loss.backward()
@@ -48,11 +51,13 @@ def _train_epoch(model: Classifier, dataloader: torch_data.DataLoader,
     return torch.Tensor(store_loss)
 
 
-def _validate_epoch(model, dataloader, loss_function):
+def _validate_epoch(model: Classifier, dataloader: torch_data.DataLoader,
+                    loss_function: Loss, device: torch.device):
     model.eval()
     store_loss = list()
     for _, batch in enumerate(dataloader):
         input_, target = batch
+        input_, target = input_.to(device), target.to(device)
         output = model(input_)
         store_loss.append(loss_function.compute(output, target).item())
     return torch.Tensor(store_loss)
@@ -79,3 +84,4 @@ class TrainSettings(NamedTuple):
     """Train settings"""
     log_interval: int
     num_epochs: int
+    device: torch.device
