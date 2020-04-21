@@ -3,7 +3,7 @@ import unittest
 import math
 import torch
 import torch_testing as tt
-from src import loss
+from src.loss.angle_loss import angle
 
 NUM_PLACES = 5
 
@@ -13,7 +13,7 @@ class TestAngle(unittest.TestCase):
         x_vec = torch.Tensor([1.0, 0.0])
         y_vec = torch.Tensor([0.0, 1.0])
         true_angle = math.pi / 2
-        calc_angle = loss.angle(x_vec, y_vec)
+        calc_angle = angle(x_vec, y_vec)
         self.assertAlmostEqual(true_angle,
                                calc_angle.item(),
                                places=NUM_PLACES)
@@ -22,16 +22,16 @@ class TestAngle(unittest.TestCase):
         x_vec = torch.Tensor([1.0, 0.0])
         y_vec = torch.Tensor([0.0, 10.0])
         true_angle = math.pi / 2
-        calc_angle = loss.angle(x_vec, y_vec)
+        calc_angle = angle(x_vec, y_vec)
         self.assertAlmostEqual(true_angle,
                                calc_angle.item(),
                                places=NUM_PLACES)
 
-    def test_orthogonal_unit_vector(self):
+    def test_orthogonal_neg_unit_vector(self):
         x_vec = torch.Tensor([-1.0, 0.0])
         y_vec = torch.Tensor([0.0, 1.0])
         true_angle = math.pi / 2
-        calc_angle = loss.angle(x_vec, y_vec)
+        calc_angle = angle(x_vec, y_vec)
         self.assertAlmostEqual(true_angle,
                                calc_angle.item(),
                                places=NUM_PLACES)
@@ -40,7 +40,7 @@ class TestAngle(unittest.TestCase):
         x_vec = torch.Tensor([1.0, 0.0])
         y_vec = torch.Tensor([[1.0, 0.0], [0.0, 2.0], [-3.0, 0.0]])
         true_angle = torch.Tensor([0.0, math.pi / 2, math.pi])
-        calc_angle = loss.angle(x_vec, y_vec)
+        calc_angle = angle(x_vec, y_vec)
         tt.assert_almost_equal(true_angle, calc_angle)
 
 
