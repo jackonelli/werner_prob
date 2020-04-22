@@ -4,3 +4,4 @@ torchvision
 torch_testing
 mypy
 jupyter
+matplotlib
