@@ -7,3 +7,4 @@ venv
 logs
 data
 stored_models
+results
